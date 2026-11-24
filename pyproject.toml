@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sofia-deploy"
+version = "1.0.0"
+description = "Sofia — interactive Linux deployer for Angular / React / Vite / Node apps (nginx + SSL + systemd)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "Sofia", email = "sofia@users.noreply.github.com" }]
+keywords = ["deploy", "nginx", "letsencrypt", "systemd", "angular", "react", "vite", "nodejs", "sofia"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: System :: Systems Administration",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Orbit-it/sofia"
+Documentation = "https://github.com/Orbit-it/sofia#readme"
+Issues = "https://github.com/Orbit-it/sofia/issues"
+
+[project.scripts]
+sofia = "sofia.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sofia = ["templates/*"]
