@@ -26,9 +26,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/Orbit-it/sofia"
-Documentation = "https://github.com/Orbit-it/sofia#readme"
-Issues = "https://github.com/Orbit-it/sofia/issues"
+Homepage = "https://github.com/Orbit-it/sofia-deploy"
+Documentation = "https://github.com/Orbit-it/sofia-deploy#readme"
+Issues = "https://github.com/Orbit-it/sofia-deploy/issues"
 
 [project.scripts]
 sofia = "sofia.cli:main"
