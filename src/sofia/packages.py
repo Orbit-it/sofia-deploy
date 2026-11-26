@@ -26,17 +26,25 @@ def ensure_letsencrypt_ssl_snippets() -> None:
         except Exception:  # noqa: BLE001
             options.write_text(OPTIONS_SSL, encoding="utf-8")
         console.log("Créé /etc/letsencrypt/options-ssl-nginx.conf")
+
     dh = le / "ssl-dhparams.pem"
     if not dh.exists():
-        console.log("Génération de ssl-dhparams.pem (1–2 min)…")
-        run(["openssl", "dhparam", "-out", str(dh), "2048"])
+        # Copier le fichier fourni avec Sofia (évite openssl dhparam qui bloque 1–2 min)
+        try:
+            dh.write_text(template_text("ssl-dhparams.pem"), encoding="utf-8")
+            console.log("Installé ssl-dhparams.pem (fourni avec Sofia)")
+        except Exception:  # noqa: BLE001
+            console.warn("Fallback : génération openssl dhparam (peut prendre 1–2 min, laisse tourner)…")
+            run(["openssl", "dhparam", "-out", str(dh), "2048"])
 
 
 def install_base_packages(host: HostOS) -> None:
     console.log("Installation des paquets système…")
+    console.log("(dnf/apt peuvent sembler figés pendant le téléchargement — patiente)")
     pkg_update(host)
 
     if host.pkg == "apt":
+        console.log("→ apt: nginx, certbot, outils…")
         pkg_install(
             host,
             "curl",
@@ -49,24 +57,35 @@ def install_base_packages(host: HostOS) -> None:
             "python3-certbot-nginx",
         )
         ensure_letsencrypt_ssl_snippets()
+        console.log("Paquets système OK")
         return
 
     if not shutil.which("curl"):
+        console.log("→ installation curl…")
         pkg_install(host, "curl", check=False)
+    console.log("→ ca-certificates, openssl, git…")
     pkg_install(host, "ca-certificates", "openssl", "git", "tar", "gzip", check=False)
 
     if not shutil.which("nginx"):
+        console.log("→ installation nginx…")
         if shutil.which("amazon-linux-extras"):
             run(["amazon-linux-extras", "enable", "nginx1"], check=False)
         if not pkg_install(host, "nginx", check=False):
             console.die("Échec installation nginx")
+    else:
+        console.log("nginx déjà présent")
 
     if not shutil.which("certbot"):
+        console.log("→ installation certbot…")
         if not pkg_install(host, "certbot", "python3-certbot-nginx", check=False):
-            console.warn("certbot introuvable — tentative pip…")
+            console.warn("certbot introuvable — tentative pip (peut être long)…")
             if pkg_install(host, "python3-pip", check=False):
                 run(["pip3", "install", "--upgrade", "certbot", "certbot-nginx"], check=False)
             else:
                 console.warn("certbot non installé — SSL pourra échouer")
+    else:
+        console.log("certbot déjà présent")
 
+    console.log("→ snippets SSL Let's Encrypt…")
     ensure_letsencrypt_ssl_snippets()
+    console.log("Paquets système OK")

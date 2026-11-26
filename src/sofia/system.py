@@ -79,12 +79,16 @@ def run(
 
 
 def pkg_update(host: HostOS) -> None:
+    # Éviter `dnf makecache` complet (souvent long / silencieux sur Amazon Linux)
     if host.pkg == "apt":
+        console.log("apt-get update…")
         run(["apt-get", "update", "-y"], check=False)
     elif host.pkg == "dnf":
-        run(["dnf", "-y", "makecache"], check=False)
+        console.log("dnf check (rapide)…")
+        run(["dnf", "-y", "check"], check=False)
     else:
-        run(["yum", "-y", "makecache"], check=False)
+        console.log("yum check…")
+        run(["yum", "-y", "check"], check=False)
 
 
 def pkg_install(host: HostOS, *packages: str, check: bool = True) -> bool:

@@ -88,14 +88,30 @@ def deploy(cfg: DeployConfig) -> None:
     require_root()
     cfg.validate()
     host = HostOS()
+    total = 8
 
+    console.step(1, total, "Paquets système (nginx, certbot…)")
     install_base_packages(host)
+
+    console.step(2, total, "Node.js")
     cfg.node_bin = ensure_node(cfg, host)
+
+    console.step(3, total, "Pare-feu 80/443")
     open_firewall()
+
+    console.step(4, total, "Variables d'environnement")
     write_runtime_env(cfg)
+
+    console.step(5, total, f"Build applicatif ({cfg.build_command[:60]}…)")
     build_app(cfg)
+
+    console.step(6, total, "Service systemd + nginx HTTP")
     install_systemd(cfg)
     install_nginx_http(cfg)
+
+    console.step(7, total, "Certificat SSL Let's Encrypt")
     obtain_ssl(cfg)
+
+    console.step(8, total, "Vérification finale")
     healthcheck(cfg)
     print_summary(cfg)

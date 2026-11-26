@@ -20,15 +20,15 @@ def _c(color: str, msg: str) -> str:
 
 
 def log(msg: str) -> None:
-    print(_c(Colors.GREEN, "[sofia] ") + msg)
+    print(_c(Colors.GREEN, "[sofia] ") + msg, flush=True)
 
 
 def warn(msg: str) -> None:
-    print(_c(Colors.YELLOW, "[sofia] ") + msg)
+    print(_c(Colors.YELLOW, "[sofia] ") + msg, flush=True)
 
 
 def error(msg: str) -> None:
-    print(_c(Colors.RED, "[sofia] ") + msg, file=sys.stderr)
+    print(_c(Colors.RED, "[sofia] ") + msg, file=sys.stderr, flush=True)
 
 
 def die(msg: str) -> None:
@@ -37,9 +37,14 @@ def die(msg: str) -> None:
 
 
 def title(msg: str) -> None:
-    print()
-    print(_c(Colors.BOLD + Colors.CYAN, msg))
-    print(_c(Colors.CYAN, "=" * max(len(msg), 8)))
+    print(flush=True)
+    print(_c(Colors.BOLD + Colors.CYAN, msg), flush=True)
+    print(_c(Colors.CYAN, "=" * max(len(msg), 8)), flush=True)
+
+
+def step(n: int, total: int, msg: str) -> None:
+    print(flush=True)
+    print(_c(Colors.BOLD + Colors.CYAN, f"[sofia] Étape {n}/{total} — {msg}"), flush=True)
 
 
 def ask(prompt: str, default: str | None = None, *, secret: bool = False) -> str:
@@ -51,7 +56,7 @@ def ask(prompt: str, default: str | None = None, *, secret: bool = False) -> str
             return default
         if value:
             return value
-        print("  → valeur obligatoire.")
+        print("  → valeur obligatoire.", flush=True)
 
 
 def ask_bool(prompt: str, default: bool = True) -> bool:
@@ -64,7 +69,7 @@ def ask_bool(prompt: str, default: bool = True) -> bool:
             return True
         if value in {"n", "non", "no", "0", "false"}:
             return False
-        print("  → répondre par o/n.")
+        print("  → répondre par o/n.", flush=True)
 
 
 def ask_choice(prompt: str, choices: list[str], default: str) -> str:
@@ -75,4 +80,4 @@ def ask_choice(prompt: str, choices: list[str], default: str) -> str:
             return default
         if value in choices:
             return value
-        print(f"  → choisir parmi : {', '.join(choices)}")
+        print(f"  → choisir parmi : {', '.join(choices)}", flush=True)

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sofia-deploy"
-version = "1.0.0"
+version = "1.0.1"
 description = "Sofia — interactive Linux deployer for Angular / React / Vite / Node apps (nginx + SSL + systemd)"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -37,4 +37,4 @@ sofia = "sofia.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-sofia = ["templates/*"]
+sofia = ["templates/*", "templates/ssl-dhparams.pem"]
